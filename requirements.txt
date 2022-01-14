@@ -17,3 +17,4 @@ wget==3.2
 python_docx==0.8.11
 coolname==1.1.0
 Pillow==8.4.0
+passlib==1.7.4
