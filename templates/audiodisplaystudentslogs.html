@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags --> 
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Admin Dashboard</title>
+  <!-- base:css -->
+  <link rel="stylesheet" href="/static/vendors/mdi/css/materialdesignicons.min.css">
+  <link rel="stylesheet" href="/static/vendors/feather/feather.css">
+  <link rel="stylesheet" href="/static/vendors/base/vendor.bundle.base.css">
+  <!-- endinject -->
+  <!-- plugin css for this page -->
+  <link rel="stylesheet" href="/static/vendors/flag-icon-css/css/flag-icon.min.css"/>
+  <link rel="stylesheet" href="/static/vendors/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/static/vendors/jquery-bar-rating/fontawesome-stars-o.css">
+  <link rel="stylesheet" href="/static/vendors/jquery-bar-rating/fontawesome-stars.css">
+  <!-- End plugin css for this page -->
+  <link rel="stylesheet" href="https://unpkg.com/intro.js/minified/introjs.min.css">
+  <!-- inject:css -->
+  <link rel="stylesheet" href="/static/regal_css/style.css">
+  
+  <!-- endinject -->
+  <link rel="shortcut icon" href="/static/images/logo.png" />
+</head>
+
+<body>
+  <div class="container-scroller">
+    <!-- partial:partials/_navbar.html -->
+    <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+      <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
+        <a class="navbar-brand brand-logo" href="/teacher_dashboard"><img src="static/images/logo.svg" alt="logo"/></a>
+      
+      </div>
+      <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+        <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+          <span class="icon-menu"></span>
+        </button>
+       
+        <ul class="navbar-nav navbar-nav-right">
+          
+        
+          <li class="nav-item dropdown d-flex mr-4 ">
+                    
+
+            <a class="nav-link count-indicator dropdown-toggle d-flex align-items-center justify-content-center" id="notificationDropdown" href="#" data-toggle="dropdown">
+              <i class="icon-cog"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown">
+              <p class="mb-0 font-weight-normal float-left dropdown-header">Settings</p>
+              
+              <a class="dropdown-item preview-item" href="/logout">
+                  <i class="icon-inbox"></i> Logout
+              </a>
+            </div>
+          </li>
+          
+        </ul>
+
+        
+        
+        <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+          <span class="icon-menu"></span>
+        </button>
+
+
+      </div>
+    </nav>
+    <!-- partial -->
+    <div class="container-fluid page-body-wrapper">
+      <!-- partial:partials/_sidebar.html -->
+      <nav class="sidebar sidebar-offcanvas" id="sidebar" data-title="Welcome" data-intro="This is a menu where you can select different options.">
+        <ul class="nav">
+          
+         <li class="nav-item" data-title="2" data-intro="This is a dashboard where you can get all details of recent activity.You are currently on this tab.">
+            <a class="nav-link" href="/teacher_dashboard">
+              <i class="icon-pie-graph menu-icon"></i>
+              <span class="menu-title">Dashboard</span>
+            </a>
+          </li>
+
+
+          <li class="nav-item" data-title="3" data-intro="By clicking this button you will be navigated to a page that will display the exam form.">
+            <a class="nav-link" href="/create-test">
+              <i class="icon-pie-graph menu-icon"></i>
+              <span class="menu-title">Create Exam</span>
+            </a>
+          </li>
+
+          <li class="nav-item" data-title="4" data-intro="View Questions will first prompt you to select the exam ID and then display all the questions created in it.">
+            <a class="nav-link" href="/viewquestions">
+              <i class="icon-pie-graph menu-icon"></i>
+              <span class="menu-title">View Questions</span>
+            </a>
+          </li>
+
+         <li class="nav-item" data-title="5" data-intro="Update Questions allows you to edit the question, options and the marks.">
+            <a class="nav-link" href="/updateidlist">
+              <i class="icon-pie-graph menu-icon"></i>
+              <span class="menu-title">Update Questions</span>
+            </a>
+          </li>
+
+          <li class="nav-item" data-title="6" data-intro="If you want to add more question after creating the test then click here to add a question.">
+            <a class="nav-link" href="/addquestion">
+              <i class="icon-pie-graph menu-icon"></i>
+              <span class="menu-title">Add Questions</span>
+            </a>
+          </li>
+          
+      
+          <li class="nav-item" data-title="7" data-intro="Automatic Monitoring is for those exams which have been set for automatic proctoring. You can find logs of students attempted the test here.">
+            <a class="nav-link" href="/viewstudentslogs">
+              <i class="icon-pie-graph menu-icon"></i>
+              <span class="menu-title">Automatic Monitoring</span>
+            </a>
+          </li>
+
+          <li class="nav-item" data-title="8" data-intro="Live Monitoring is for those exams which have been set for live proctoring. You can find the live video of students attempting the test here.">
+            <a class="nav-link" href="/livemonitoringid">
+              <i class="icon-pie-graph menu-icon"></i>
+              <span class="menu-title">Live Monitoring</span>
+            </a>
+          </li>
+
+          <li class="nav-item" data-title="9" data-intro="This is the Results section that will give the marks of the students who are done with the test.">
+            <a class="nav-link" href="/{{session.username}}/tests-created">
+              <i class="icon-pie-graph menu-icon"></i>
+              <span class="menu-title">Results</span>
+            </a>
+          </li>
+
+          <li class="nav-item" data-title="10" data-intro="If you had chosen to not display results immediately to the students, then Publish Results allows you to publish the students results.">
+            <a class="nav-link" href="/publish-results-testid">
+              <i class="icon-pie-graph menu-icon"></i>
+              <span class="menu-title">Publish Results</span>
+            </a>
+          </li>
+  
+        </ul>
+      </nav>
+
+<div class="row align-items-center d-flex  justify-content-center">
+  <div class="col-12 mb-4">
+      <div class="card border-light shadow-sm components-section align-items-center d-flex  justify-content-center">
+          <div class="card-body align-items-center d-flex justify-content-center">     
+              <div class="row mb-4">
+                  <div class="col-lg-12 col-sm-16">
+                    <h3 class="h3 text-center">STUDENT AUDIO LOGS of {{testid}} of {{email}}</h3>  
+                  </div>
+                  <div class="card-body justify-content-md-center">
+                      <div class="table-responsive">
+                          <table id="example" class="display nowrap" style="width:100%">
+                              <thead class="thead-light">
+                                  <tr>
+<th class="border-0" scope="col" >NAME</th>
+<th class="border-0" scope="col" >AUDIO</th>
+<th class="border-0" scope="col" >PREDICTION</th>
+<th class="border-0" scope="col" >TIME</th>
+</tr>
+<tbody>
+  {% for res in callresults %}
+  <tr>
+  <td>{{res['name']}}</td>
+  <td>{{res['voice_db']}}</td>
+  <td>
+  {% if res['voice_db'] < 10 %}
+  <h6 class="text-primary"> Normal</h6>
+  {% elif res['voice_db'] >= 10 and res['voice_db'] < 20 %}
+  <h6 class="text-muted">Little Disturbance</h6>
+  {% else %}
+  <h6 class="text-danger">More Disturbance</h6>
+  {% endif %}
+  </td>
+  <td>{{res['log_time']}}</td>
+  </tr>
+  {% endfor %}
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+      </div>
+  </div>
+</div>
+
+ <!-- base:js -->
+  <script src="/static/vendors/base/vendor.bundle.base.js"></script>
+  <!-- endinject -->
+  <!-- Plugin js for this page-->
+  <!-- End plugin js for this page-->
+  <!-- inject:js -->
+  <script src="/static/regal_js/off-canvas.js"></script>
+  <script src="/static/regal_js/hoverable-collapse.js"></script>
+  <script src="/static/regal_js/template.js"></script>
+  <!-- endinject -->
+  <!-- plugin js for this page -->
+  <script src="/static/vendors/chart.js/Chart.min.js"></script>
+  <script src="/static/vendors/jquery-bar-rating/jquery.barrating.min.js"></script>
+  <!-- End plugin js for this page -->
+  <!-- Custom js for this page-->
+  <script src="/static/regal_js/dashboard.js"></script>
+
+<script>
+  $(document).ready(function() {
+  $('#example').DataTable( {
+      dom: 'Bfrtip',
+      buttons: [
+          'copy', 'csv', 'excel', 'pdf', 'print'
+      ]
+  } );
+} );
+</script>
+</body>
+</html>
