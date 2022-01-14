@@ -1,0 +1,5 @@
+qid,q,a,b,c,d,ans,marks
+1,1+1,2,0,3,1,a,1
+2,0!,0,1,Not define,infinity,b,2
+3,0/0,0,1,Infinity,None,c,1
+4,2*2,4,1,2,0,a,1
