@@ -1,0 +1,17 @@
+node_modules/
+html&css/
+.temp/
+css/
+models/yolov3.weights
+__MACOSX/
+assets/
+src/
+questions/
+gulpfile.js
+coco models/
+eye_tracking/
+face_detection/
+flask_session
+out/
+static/html/
+static/vendors/
