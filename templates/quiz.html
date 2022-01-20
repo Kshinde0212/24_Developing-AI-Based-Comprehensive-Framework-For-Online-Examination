@@ -1,0 +1,97 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<script type="text/javascript"> var answers = "{{answers}}";</script>
+<div id="time">{{duration}}</div>
+<table>
+<tr>
+  <td id='queid'>Question No.</td>
+  <td id='mark'>Marks: {{ marks }}</td>
+</tr>
+</table>
+<pre class="prettyprint" id="pretest">
+  <p id="que" style="">{{ q }}</p>
+</pre>
+
+<table id="options">
+  <tr>
+    <td id='a'>𝐀. {{ a }}</td>
+    <td id='b'>𝐁. {{ b }}</td>
+  </tr>
+  <tr>
+    <td id='c'>𝐂. {{ c }}</td>
+    <td id='d'>𝐃. {{ d }}</td>
+  </tr>
+</table>
+    
+<div id="overlay">
+  <div class="container" id="question-list">
+  </div>
+</div>    
+
+<div id="submit-overlay"></div>
+
+
+<div class="form-group">
+    <div class="container">
+      <div class="justify-content-center align-items-center">
+        <div id="otEmbedContainer"  id ="livecheck" style="width:320px; height:320px; display: none;">
+        <script src="https://tokbox.com/embed/embed/ot-embed.js?embedId=2020dbd9-0a89-472d-a60b-ca12ddfd48bc&room={{tid}}"></script>
+      </div>
+      </div>
+    </div>
+
+
+<div class="form-group">
+    <div class="container" id ="videocheck" style="display: none;">
+      <div class="justify-content-center align-items-center">
+      <video id="stream" width="320" height="320">
+        <canvas id="capture" width="320" height="320"></canvas>
+      </video>
+      </div>
+      </div>
+    </div>
+
+
+
+<footer class="page-footer fixed-bottom pt-4">
+  <div class="container">
+
+    <ul class="list-unstyled list-inline text-center py-2">
+      <li class="list-inline-item">
+        <button class="btn btn-primary btn-rounded" id="questions">Questions</button>
+        <input type="button" value="Prev" id="prev" class="btn btn-primary btn-rounded">
+        <input type="button" value="Next" id="next" class="btn btn-primary btn-rounded">
+        <input type="button" value="Submit" id="submit" class="btn btn-success btn-rounded">
+        <button class="btn btn-primary btn-rounded" id="bookmark">Bookmark</button>
+        <div class="btn btn-success" id="finish">Finish Test</div>
+      </li>
+    </ul>
+  </div>
+
+<div id="snackbar">Don't try to open new window or any other applications. You are being monitored!</div>
+
+</footer>
+
+<script type="text/javascript" src="{{ url_for('static', filename='app.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='disp.css') }}">
+
+
+<script>
+var vid = "{{proctortype}}";
+console.log(vid)
+if(vid == "0")
+{
+  document.getElementById('videocheck').style.display = "block"
+  startStreaming();
+  captureSnapshot();
+}
+else
+{
+  document.getElementById('livecheck').style.display = "block"
+}
+    </script> 
+
+
+{% endblock %}
