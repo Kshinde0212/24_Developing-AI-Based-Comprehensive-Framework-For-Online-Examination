@@ -16,7 +16,7 @@ Pillow==8.4.0
 python-docx==0.8.11
 scipy==1.7.1
 six==1.16.0
-tensorboard-cpu==2.7.0
+tensorboard==2.7.0
 tensorflow-cpu==2.7.0
 tensorflow-estimator==2.7.0
 validate-email==1.3
