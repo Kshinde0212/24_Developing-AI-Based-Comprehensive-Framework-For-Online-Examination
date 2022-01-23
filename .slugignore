@@ -4,7 +4,6 @@ html&css/
 css/
 models/yolov3.weights
 __MACOSX/
-assets/
 src/
 questions/
 gulpfile.js
@@ -13,5 +12,4 @@ eye_tracking/
 face_detection/
 flask_session
 out/
-static/html/
-static/vendors/
+static/
