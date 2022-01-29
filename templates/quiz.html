@@ -2,19 +2,26 @@
 
 {% block body %}
 <script type="text/javascript"> var answers = "{{answers}}";</script>
-<div id="time">{{duration}}</div>
-<table>
+<!-- <div id="time">{{duration}}</div> -->
+
+<table class="table table-striped">
 <tr>
   <td id='queid'>Question No.</td>
   <td id='mark'>Marks: {{ marks }}</td>
+  <td><b>Time Left :<div id="time">{{duration}}</div></b></td>
 </tr>
 </table>
-<pre class="prettyprint" id="pretest">
-  <p id="que" style="">{{ q }}</p>
-</pre>
 
-<table id="options">
-  <tr>
+
+<div class="card">
+  <div class="card-body">
+    <p id="que" style="">{{ q }}</p>
+  </div>
+</div>
+
+<table id="options" class="table table-success table-striped" border="1">
+  
+  <tr border="1">
     <td id='a'>𝐀. {{ a }}</td>
     <td id='b'>𝐁. {{ b }}</td>
   </tr>
