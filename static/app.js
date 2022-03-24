@@ -7,13 +7,32 @@ const BOOKMARKED=2;
 const MARKED_BOOKMARKED=3;
 const SUBMITTED = 4;
 const SUBMITTED_BOOKMARKED = 5;
+var c = 0;
 
-function mySnackBar() {
+function mySnackBar() 
+{
+    c = c+1;
     var x = document.getElementById("snackbar");
     x.className = "show";
+    if (c<=5)
+    {
+        x.innerHTML="You have naviagted to other window"+" "+c+"/5 times. Your test will automatically get submitted after 5 attempts."
+    }
+    else
+    {
+        $('#msg').addClass('alert-info');
+        $('#msg').append("Test submitted successfully");
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            data: {flag: 'completed'},
+            success: function(data) {
+             window.location.replace('/student_dashboard');
+            }
+        }); 
+    }
     setTimeout(function(){ x.className = x.className.replace("show", ""); }, 10000);
   }
-
 
 window.onfocus = function(event) {
     mySnackBar();
@@ -24,11 +43,15 @@ window.onfocus = function(event) {
                 });
 };
 
-var stream = document.getElementById("stream");
-var capture = document.getElementById("capture");
-var cameraStream = null;
+  var stream = document.getElementById("stream");
+  var capture = document.getElementById("capture");
+  var cameraStream = null;
+      
+  var array = null;
+  var values = 0;
+  var length = null;
 
-function startStreaming() {
+  function startStreaming() {
   
     var mediaSupport = 'mediaDevices' in navigator;
     navigator.getUserMedia = navigator.getUserMedia ||
@@ -95,20 +118,14 @@ function startStreaming() {
       var d1 = capture.toDataURL("image/png");
       var res = d1.replace("data:image/png;base64,", "");
 
-        var average = values / length;
-
-        console.log(average)
-        console.log(Math.round(average - 40));
-
-        if(average)
-        {
+        
+        
             $.post("/video_feed",{
-                /* data : {'imgData':res,'voice_db':average,'testid': tid}}, */
-                data : {'imgData':res,'voice_db':average}},
+                data : {'imgData':res}},
                 function(data){
                 console.log(data);
                 });
-        }
+        
 
       } 
       setTimeout(captureSnapshot, 5000);
@@ -117,6 +134,7 @@ function startStreaming() {
 $(document).ready( function() {
     var url = window.location.href;
     var list = url.split('/');
+    $('.question').remove();
     if (url.includes('/give-test/')) {
         $.ajax({
             type:"POST",
@@ -127,6 +145,7 @@ $(document).ready( function() {
                 nos = temp;
                 display_ques(1);
                 make_array();
+                ques_grid();
             }
         });
     }
@@ -134,6 +153,7 @@ $(document).ready( function() {
     startTimer(time, display);
     sendTime();
     flag_time = true;
+
 })
 
 var unmark_all = function() {
@@ -188,7 +208,8 @@ function startTimer(duration, display) {
     }, 1000);
 }
 
-function finish_test() {
+function finish_test() 
+{
     $('#msg').addClass('alert-info');
     $('#msg').append("Test submitted successfully");
     $.ajax({
@@ -198,9 +219,9 @@ function finish_test() {
         success: function(data) {
             window.location.replace('/student_dashboard');
         }
-    });
-    
+    });    
 }
+
 function sendTime() {
     var intervalTime = setInterval(function() {
         if(flag_time == false){
@@ -222,12 +243,13 @@ function sendTime() {
         }
     }, 5000);
 }
-$(document).on('click', '#next', function(e){
+
+/* $(document).on('click', '#next', function(e){
     e.preventDefault();
     curr += 1;
     display_ques(curr+1);
     
-});
+}); */
 
 $(document).on('click', '#prev', function(e){
     e.preventDefault();
@@ -236,7 +258,7 @@ $(document).on('click', '#prev', function(e){
     
 });
 
-$('#submit').on('click', function(e){
+$('#next').on('click', function(e){
     e.preventDefault();
     var marked;
     if(flag_time == false){
@@ -249,6 +271,8 @@ $('#submit').on('click', function(e){
             marked =  $(this).attr('id');
             data[curr+1].marked= marked;
             data[curr+1].status = SUBMITTED;
+            $('#question-list').empty();
+            ques_grid();
         }
     });
     $.ajax({
@@ -262,58 +286,32 @@ $('#submit').on('click', function(e){
             console.log("Here is the error res: " + JSON.stringify(error));
         }
     });
-    $('#next').trigger('click');
+    e.preventDefault();
+    curr += 1;
+    display_ques(curr+1);
 });
-
- function onn() {
-    $('.question').remove();
-    document.getElementById("overlay").style.display = "block";
-    $('#question-list').append('<div id="close">X</div>');
-    $('#close').on('click', function(e){
-        off();
-    });
-} 
-
-function off() {
-    document.getElementById("overlay").style.display = "none";
-    $('#close').remove();
-} 
-
-$('#questions').on('click', function(e){
-    onn();
-    for(var i=1;i<=nos.length;i++) {
-        var color = '';
-        var status = data[i].status;
-        if(status == NOT_MARKED)
-            color = '#1976D2';
-        else if(status == SUBMITTED)
-            color = '#42ed62';
-        else if(status == BOOKMARKED || status == SUBMITTED_BOOKMARKED)
-            color = '#e6ed7b';
-        else{
-            color = '#f44336';
-        }
-        j = i<10 ? "0" + i: i
-        $('#question-list').append('<div class="question" style="background-color:' + color + '; color:white;">' + j + '</div>');
-    }
-    $('.question').click(function() {
-        var id = parseInt($(this).text());
-        curr = id-1;
-        display_ques(curr+1);
-        off();
-    });
-
-});
-
 
 $('#bookmark').on('click', function(e){
     var status = data[curr+1].status;
     if( status == MARKED)
+    {
         data[curr+1].status = MARKED_BOOKMARKED;
+        $('#question-list').empty();
+        ques_grid();
+    }
     else if(status == SUBMITTED)
+    {
         data[curr+1].status = SUBMITTED_BOOKMARKED;
+        $('#question-list').empty();
+        ques_grid();
+    }
     else
+    {
         data[curr+1].status = BOOKMARKED;
+        $('#question-list').empty();
+        ques_grid();
+    }
+
 });
 
 
@@ -354,9 +352,41 @@ var marked = function() {
     for(var i=1;i<=nos.length;i++){
         if(data[i].status == SUBMITTED || data[i].status == SUBMITTED_BOOKMARKED){
             count++;
+            $('#question-list').empty();
+            ques_grid();
         } 
     }
     return count;
+}
+
+var ques_grid = function() {
+    document.getElementById("overlay").style.display = "block";
+    for(var i=1;i<=nos.length;i++) {
+        var color = '';
+        var status = data[i].status;
+        if(status == NOT_MARKED)
+        {
+            color = '#ad0011';
+        }
+        else if(status == SUBMITTED)
+        {
+            color = '#42ed62';
+        }
+        else if(status == BOOKMARKED || status == SUBMITTED_BOOKMARKED)
+        {
+            color = '#EC8605';
+        }
+        else{
+            color = '#f44336';
+        }
+        j = i<10 ? "0" + i: i
+        $('#question-list').append('<div class="col-sm-2"><button class="btn btn-primary" style="background-color:' + color + '; color:white;"><div class="question" style="background-color:' + color + '; color:white;">' + j + '</div></div></div>');
+    }
+    $('.question').click(function() {
+        var id = parseInt($(this).text());
+        curr = id-1;
+        display_ques(curr+1);
+    });
 }
 
 var make_array = function() {
@@ -373,7 +403,17 @@ var make_array = function() {
     }
 }
 
+window.addEventListener('selectstart', function(e){ e.preventDefault(); });
+  $(document).ready(function () {
+      $('body').bind('select cut copy paste', function (e) {
+          e.preventDefault();
+      });
+   
+  });
 
-window.addEventListener('blur', function() { 
-    window.location.replace('/student_dashboard');
- }); 
+  document.addEventListener('keyup', (e) => {
+  if (e.key == 'PrintScreen') {
+  navigator.clipboard.writeText('');
+  alert('Screenshots disabled!');
+  }
+  });
