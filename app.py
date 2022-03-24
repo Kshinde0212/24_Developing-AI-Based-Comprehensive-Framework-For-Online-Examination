@@ -26,7 +26,7 @@ import operator
 import pandas as pd
 from wtforms_components import TimeField , DateField
 #from wtforms.fields.html5 import DateField
-from wtforms.validators import ValidationError, NumberRange
+from wtforms.validators import ValidationError, NumberRange , InputRequired
 import socket
 import camera
 #from emailverifier import Client
@@ -129,7 +129,7 @@ def video_feed():
 		imgData = request.form['data[imgData]']
 		#testid = request.form['data[testid]']
 		tid = session['testid']
-		voice_db = request.form['data[voice_db]']
+		#voice_db = request.form['data[voice_db]']
 		
 		name = session['name']
 		email = session['username']
@@ -143,8 +143,8 @@ def video_feed():
 		user_move2 = proctorData['user_move2']
 		eye_movements = proctorData['eye_movements']
 		cur = mysql.connection.cursor()
-		results = cur.execute('INSERT INTO proctoring_log (email, name, test_id, voice_db, img_log, user_movements_updown, user_movements_lr, user_movements_eyes, phone_detection, person_status) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)',
-			(email, name, tid, voice_db, jpg_as_text, user_move1, user_move2, eye_movements, mob_status, person_status))
+		results = cur.execute('INSERT INTO proctoring_log (email, name, test_id,  img_log, user_movements_updown, user_movements_lr, user_movements_eyes, phone_detection, person_status) values(%s,%s,%s,%s,%s,%s,%s,%s,%s)',
+			(email, name, tid,  jpg_as_text, user_move1, user_move2, eye_movements, mob_status, person_status))
 		mysql.connection.commit()
 		cur.close()
 		if(results > 0):
@@ -166,6 +166,7 @@ class UploadForm(FlaskForm):
     password = StringField('Test Password', [validators.Length(min=3, max=6)])
     proctor_type = RadioField('Proctoring Type', choices=[('0','Automatic Monitoring'),('1','Live Monitoring')]) 
 
+    
     def validate_end_date(form, field):
     	if field.data < form.start_date.data:
     		raise ValidationError("End date must not be earlier than start date.")
@@ -272,7 +273,7 @@ def student_dashboard():
 	u_name = session['username']
 	cur = mysql.connection.cursor()
 	type2 = "student"
-	results = cur.execute('SELECT count(*) from studenttestinfo where username=%s', [u_name])
+	results = cur.execute('SELECT count(*) from studenttestinfo where username=%s and completed=1', [u_name])
 	if results>0:
 		data = cur.fetchone()
 		tote = data['count(*)']
@@ -280,7 +281,7 @@ def student_dashboard():
 	if results2>0:
 		data2 = cur.fetchone()
 		tots = data2['count(*)']
-	cur.execute('SELECT * from studenttestinfo where username = %s order by test_id DESC LIMIT 5', [u_name])
+	cur.execute('SELECT * from studenttestinfo where username = %s and completed=1 order by test_id DESC LIMIT 5', [u_name])
 	callresults = cur.fetchall()
 	cur.close()	
 	return render_template('student_dashboard.html',student_name=t_name,given_exams=tote,tot_s=tots,callresults=callresults)
@@ -315,7 +316,26 @@ def teacher_dashboard ():
 	cur.close()
 	return render_template('teacher_dashboard.html',teacher_name=t_name,tot_t=tott,exams=tots,callresults=callresults)
 
+@app.route('/savemsg',methods=['GET','POST'])
+def savemsg():
+    if request.method == "POST":
+        contentData = request.form['message']
+        print(contentData)
+        cur = mysql.connection.cursor()
+        results = cur.execute('INSERT INTO message (content,tid,student_name) values(%s,%s,%s)',(contentData,session['testid'],session['name']))
+        mysql.connection.commit()
+        cur.close()
+        return "inserted"
 
+''' @app.route('/show_messages',methods=['GET','POST'])
+def show_messages():
+    if request.method == "POST":
+    	cur = mysql.connection.cursor()
+    	results = cur.execute('SELECT * from message')
+    	callresults = cur.fetchall()
+    	cur.close()
+    	return render_template("showmessages.html", callresults = callresults)'''
+        
 @app.route('/logout')
 def logout():
 	session.clear()
@@ -335,6 +355,19 @@ def viewquestions():
 		return render_template("viewquestions.html", cresults = cresults)
 	else:
 		return render_template("viewquestions.html", cresults = None)
+
+@app.route('/publish-results', methods=['GET','POST'])
+@is_logged
+def publish_results():
+	cur = mysql.connection.cursor()
+	username = session['username']
+	results = cur.execute('SELECT test_id from teachers where username = %s and show_ans=0', [username])
+	if results > 0:
+		cresults = cur.fetchall()
+		cur.close()
+		return render_template("publish.html", cresults = cresults)
+	else:
+		return render_template("publish.html", cresults = None)
 
 
 @app.route('/addquestion', methods=['GET','POST'])
@@ -449,6 +482,19 @@ def update_quiz(testid, qid):
 		flash('ERROR  OCCURED.', 'error')
 		return redirect(url_for('updatetidlist'))
 
+@app.route('/confirm', methods=['GET','POST'])
+@is_logged
+def confirm():
+	if request.method == 'POST':
+		tidoption = request.form['choosetid']
+		cur = mysql.connection.cursor()
+		cur.execute('UPDATE teachers SET show_ans = 1 where test_id = %s', [tidoption])
+		cur.connection.commit()
+		flash('Test results published.', 'success')
+		return render_template("confirm.html")
+	else:
+		flash('ERROR  OCCURED.', 'error')
+		return redirect(url_for('confirm'))
 
 
 @app.route('/displayquestions', methods=['GET','POST'])
@@ -483,7 +529,7 @@ def create_test():
 				question = data['((QUESTION))']
 				correct_ans = data['((CORRECT_CHOICE)) (A/B/C/D)']
 				explanation = data['((EXPLANATION)) (OPTIONAL)']
-				
+			 
 				cur.execute('INSERT INTO questions(test_id,qid,q,a,b,c,d,ans,marks,explanation) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)', 
 					(test_id,no,question,a,b,c,d,correct_ans,marks,explanation))
 				mysql.connection.commit()
@@ -501,6 +547,8 @@ def create_test():
 			subject = form.subject.data
 			topic = form.topic.data
 			proctor_type = form.proctor_type.data
+
+
 			cur.execute('INSERT INTO teachers (username, test_id, start, end, duration, show_ans, password, subject, topic,neg_mark, proctoring_type) values(%s,%s,%s,%s,%s,%s,%s, %s,%s,%s,%s)',
 				(dict(session)['username'], test_id, start_date_time, end_date_time, duration, show_result, password, subject, topic, neg_mark,proctor_type))
 			mysql.connection.commit()
@@ -518,10 +566,11 @@ def create_test():
 @is_logged
 def test(testid): 
 	global duration,marked_ans,proctortype
+	tid = testid
 	if request.method == 'GET':
 		try:
 			data = {'duration': duration, 'marks': '', 'q': '', 'a': '', 'b':'','c':'','d':'' }
-			return render_template('quiz.html' ,**data, answers=marked_ans, proctortype=proctortype)
+			return render_template('quiz.html' ,**data, answers=marked_ans, proctortype=proctortype,tid=tid)
 		except:
 			return redirect(url_for('give_test'))
 	else:
@@ -537,10 +586,12 @@ def test(testid):
 				return json.dumps(data)
 		elif flag=='mark':
 			qid = request.form['qid']
+			print(qid)
 			ans = request.form['ans']
+			print(ans)
 			results = cur.execute('SELECT * from students where test_id =%s and qid = %s and username = %s', (testid, qid, session['username']))
 			if results > 0:
-				cur.execute('UPDATE students set ans = %s where test_id = %s and qid = %s and username = %s', (testid, qid, session['username']))
+				cur.execute('UPDATE students set ans = %s where test_id = %s and qid = %s and username = %s', (ans,testid, qid, session['username']))
 				mysql.connection.commit()
 				cur.close()
 			else:
@@ -559,7 +610,7 @@ def test(testid):
 				pass
 		else:	
 			cur = mysql.connection.cursor()		
-			cur.execute('UPDATE studentTestInfo set completed=1,time_left=sec_to_time(0) where test_id = %s and username = %s', (testid, session['username']))
+			cur.execute('UPDATE studentTestInfo set completed=1 where test_id = %s and username = %s', (testid, session['username']))
 			mysql.connection.commit()
 			cur.close()
 			flash("Test submitted successfully", 'info')
@@ -679,10 +730,10 @@ def check_result(username, testid):
 					results = cur.fetchall()
 					return render_template('tests_result.html', results= results)
 			else:
-				flash('You are not authorized to check the result', 'danger')
-				return redirect(url_for('tests_given',username = username))
+				flash('You are not authorized to check the result as the teacher has not published yet.', 'danger')
+				return redirect(url_for('student_dashboard',username = username))
 	else:
-		return redirect(url_for('dashboard'))
+		return redirect(url_for('student_dashboard'))
 
 #tests==dict in tuple
 
@@ -705,6 +756,7 @@ def neg_marks(username,testid):
 	return sum
 
 def totmarks(username,tests): 
+	name = session['name']
 	cur = mysql.connection.cursor()
 	for test in tests:
 		testid = test['test_id']
@@ -722,6 +774,7 @@ def totmarks(username,tests):
 			if str(results['totalmks']) == 'None':
 				results['totalmks'] = 0
 			test['marks'] = results['totalmks']
+			totmarks = test['marks']
 	return tests
 
 
@@ -744,16 +797,31 @@ def marks_calc(username,testid):
 @is_logged
 def tests_given(username):
 	if username == session['username']:
+		ur = username
 		cur = mysql.connection.cursor()
+		name = session['name']
 		results = cur.execute('select distinct(students.test_id),subject,topic from students,teachers where students.username = %s and students.test_id=teachers.test_id', [username])
 		results = cur.fetchall()
 		results=totmarks(username,results)
-		return render_template('tests_given.html', tests=results)
+		for data in results:
+			testid = data['test_id']
+			marks = data['marks']
+			#subjecint = data['subject']
+			#topic = data['topic']
+			
+		marks = str(marks)
+		testid = str(testid)
+		
+		cur = mysql.connection.cursor()
+		cur.execute('INSERT INTO grade(student_name,marks,test) values(%s,%s,%s)',(name,marks,testid))
+		mysql.connection.commit()
+		cur.close()
+		return render_template('tests_given.html', tests=results) 
 	else:
 		flash('You are not authorized', 'danger')
 		return redirect(url_for('student_dashboard'))
 
-@app.route('/<username>/tests-created/<testid>', methods = ['POST','GET'])
+''' @app.route('/<username>/tests-created/<testid>', methods = ['POST','GET'])
 @is_logged
 def student_results(username, testid):
 	if username == session['username']:
@@ -777,7 +845,36 @@ def student_results(username, testid):
 				writer = csv.writer(f)
 				writer.writerow(fields)
 				writer.writerows(final)
+			#return send_file('/static/' + testid + '.csv', as_attachment=True) '''
+
+@app.route('/<username>/tests-created/<testid>', methods = ['POST','GET'])
+@is_logged
+def student_results(username, testid):
+	if username == session['username']:
+		cur = mysql.connection.cursor()
+		tid = testid
+		final = []
+		count = 1
+		results = cur.execute('SELECT * from grade where test=%s' , [tid])
+		if results > 0:
+			results = cur.fetchall()
+			for df in results:
+				m = df['test']
+				sn = df['student_name']
+				t = df['marks']
+				final.append([m, sn, t])
+				count+=1
+		if request.method =='GET':
+			#results = sorted(results, key=operator.itemgetter('marks'))
+			return render_template('student_results.html', data=results)
+		else:
+			fields = ['Test', 'Student Name', 'Marks']
+			with open('static/' + testid + '.csv', 'w') as f:
+				writer = csv.writer(f)
+				writer.writerow(fields)
+				writer.writerows(final)
 			#return send_file('/static/' + testid + '.csv', as_attachment=True)
+
 
 @app.route('/<username>/tests-created/<testid>/questions', methods = ['POST','GET'])
 @is_logged
@@ -821,12 +918,12 @@ def countMobStudentslogs(testid,email):
 @app.route('/ajaxstudentmonitoringstats/<testid>/<email>', methods=['GET','POST'])
 @is_logged
 def ajaxstudentmonitoringstats(testid,email):
-	win = countwinstudentslogs(testid,email)
+	#win = countwinstudentslogs(testid,email)
 	mob = countMobStudentslogs(testid,email)
 	per = countMTOPstudentslogs(testid,email)
 	tot = countTotalstudentslogs(testid,email)
-	return jsonify({"win":win,"mob":mob,"per":per,"tot":tot})
-
+	#return jsonify({"win":win,"mob":mob,"per":per,"tot":tot})
+	return jsonify({"mob":mob,"per":per,"tot":tot})
 
 @app.route('/viewstudentslogs', methods=['GET'])
 @is_logged
@@ -841,6 +938,7 @@ def viewstudentslogs():
 	else:
 		return render_template("viewstudentslogs.html", cresults = None)
 
+
 @app.route('/displaystudentsdetails', methods=['GET','POST'])
 @is_logged
 def displaystudentsdetails():
@@ -850,7 +948,11 @@ def displaystudentsdetails():
 		cur.execute('SELECT DISTINCT email,test_id from proctoring_log where test_id = %s', [tidoption])
 		callresults = cur.fetchall()
 		cur.close()
-		return render_template("displaystudentsdetails.html", callresults = callresults)
+		cur2 = mysql.connection.cursor()
+		cur2.execute('SELECT * from message where tid = %s', [tidoption])
+		callresults2 = cur2.fetchall()
+		cur2.close()
+		return render_template("displaystudentsdetails.html", callresults = callresults, callresults2 = callresults2 , tid = tidoption)
 
 @app.route('/mobdisplaystudentslogs/<testid>/<email>', methods=['GET','POST'])
 @is_logged
@@ -897,23 +999,29 @@ def audiodisplaystudentslogs(testid,email):
 @app.route('/wineventstudentslogs/<testid>/<email>', methods=['GET','POST'])
 @is_logged
 def wineventstudentslogs(testid,email):
+	#cur = mysql.connection.cursor()
+	#cur.execute('SELECT * from window_estimation_log where test_id = %s and email = %s and window_event = 1', (testid, email))
+	#callresults = cur.fetchall()
+	#cur.close()
 	callresults = displaywinstudentslogs(testid,email)
 	return render_template("wineventstudentlog.html", testid = testid, email = email, callresults = callresults)	
 
-def countwinstudentslogs(testid,email):
+''' def countwinstudentslogs(testid,email):
 	cur = mysql.connection.cursor()
 	cur.execute('SELECT COUNT(*) as wincount from window_estimation_log where test_id = %s and email = %s and window_event = 1', (testid, email))
 	callresults = cur.fetchall()
 	cur.close()
 	winc = [i['wincount'] for i in callresults]
-	return winc
+	return winc  ''' 
 
 def displaywinstudentslogs(testid,email):
+	name = email
+	print(name)
 	cur = mysql.connection.cursor()
-	cur.execute('SELECT * from window_estimation_log where test_id = %s and email = %s and window_event = 1', (testid, email))
+	cur.execute('SELECT * from window_estimation_log where test_id = %s and username = %s and window_event = 1', (testid, name))
 	callresults = cur.fetchall()
 	cur.close()
-	return callresults
+	return callresults 
 
 def countMTOPstudentslogs(testid,email):
 	cur = mysql.connection.cursor()
@@ -939,8 +1047,9 @@ def window_event():
 		testid = request.form['testid']
 		email = session['email']
 		name = session['name']
+		username = session['username']
 		cur = mysql.connection.cursor()
-		results = cur.execute('INSERT INTO window_estimation_log (email, test_id, name, window_event) values(%s,%s,%s,%s)', (email, testid, name, 1))
+		results = cur.execute('INSERT INTO window_estimation_log (email,username,test_id,name,window_event) values(%s,%s,%s,%s,%s)', (email,username,testid,name,1))
 		mysql.connection.commit()
 		cur.close()
 		if(results > 0):
