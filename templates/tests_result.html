@@ -5,20 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Dashboard</title>
-     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-   
-    <link rel="stylesheet" href="static/common.css"> 
-    <link ref="stylesheet" type="text/css" href="static/snackbar.min.css" />
-    <script src="static/snackbar.min.js"></script>
+
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/studui/assets/css/bootstrap.css">
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='disp.css') }}">
+
     <link rel="stylesheet" href="/static/studui/assets/vendors/iconly/bold.css">
-    <script
-              src="https://code.jquery.com/jquery-3.4.1.min.js"
-              integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-              crossorigin="anonymous"></script>
+
     <link rel="stylesheet" href="/static/studui/assets/vendors/perfect-scrollbar/perfect-scrollbar.css">
     <link rel="stylesheet" href="/static/studui/assets/vendors/bootstrap-icons/bootstrap-icons.css">
     <link rel="stylesheet" href="/static/studui/assets/css/app.css">
@@ -26,6 +19,7 @@
 </head>
 
 <body>
+    
     <div id="app">
         <div id="sidebar" class="active">
             <div class="sidebar-wrapper active">
@@ -43,7 +37,7 @@
                     <ul class="menu">
                         <li class="sidebar-title">Menu</li>
 
-                        <li class="sidebar-item active ">
+                        <li class="sidebar-item">
                             <a href="/student_dashboard" class='sidebar-link'>
                                 <i class="bi bi-grid-fill"></i>
                                 <span>Dashboard</span>
@@ -57,14 +51,14 @@
                             </a>
                         </li>
 
-                        <li class="sidebar-item">
-                            <a href="/give-test" class='sidebar-link'>
+                        <li class="sidebar-item active">
+                            <a href="/{{session.username}}/tests-given" class='sidebar-link'>
                                 <i class="bi bi-file-earmark-spreadsheet-fill"></i>
                                 <span>Results</span>
                             </a>
                         </li>
 
-                    <li class="sidebar-title">Forms &amp; Tables</li>
+                    <li class="sidebar-title">Options</li>
 
                     <li class="sidebar-item">
                             <a href="/" class='sidebar-link'>
@@ -79,25 +73,9 @@
                 <button class="sidebar-toggler btn x"><i data-feather="x"></i></button>
             </div>
         </div>
+        
 
-
-                              
-                        
-
-
-         <section class="section">
-                    <div class="row" id="table-head">
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h4 class="card-title">Your Results</h4>
-                                </div>
-                                <div class="card-content">
-                                    
-                                    <!-- table head dark -->
-                                    <div class="table-responsive">
-                                        
-                                       {% macro show_opt(result,opt) %}
+{% macro show_opt(result,opt) %}
                                  
                                         {% if result.correct|string() == opt|upper %}
     {% if result.marked|string() == '0' %}
@@ -117,11 +95,39 @@
 {% endmacro %}
 
 
-{% for result in results%}
+        <div id="main">
+            <header class="mb-3">
+                <a href="#" class="burger-btn d-block d-xl-none">
+                    <i class="bi bi-justify fs-3"></i>
+                </a>
+            </header>
+            {% include 'includes/_messages.html' %}
+            <div class="page-heading">
+                <h3>Tests Results</h3>
+            </div>
+            <div class="page-content">
+             
+            
+
+                    <section class="section">
+                    <div class="row" id="table-head">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">Detailed Information</h4>
+                                    <p"><h5 style="background-color:lightgreen">**Green Colour shows the correct answer for the question</h5></p>
+                                    <p><h5 style="background-color:#ffcccb">**Red Colour shows the wrong answer which has been marked for the question</h5></p>
+                                </div>
+                                <div class="card-content">
+                                    
+                                    <!-- table head dark -->
+                                    <div class="table-responsive">
+                                        
+                                        {% for result in results%}
                                         <table class="table mb-0">
                                            <tr>
-                                            <td>Question No. {{ result.qid }}</td>
-                                            <td>Marks: {{ result.marks }}</td>
+                                            <td style="background-color:lightblue"><b>Question No. {{ result.qid }}</b></td>
+                                            <td style="background-color:lightblue">Marks: {{ result.marks }}</td>
                                         </tr>
 
                                         <tr>
@@ -140,9 +146,10 @@
             <tr>
                 <td colspan="2"><b>Explanation</b>:  {{result.explanation}} </td>
             </tr>
+            <br>
         </table> 
     {% endfor %}
-                                        </table>
+
 
                                     </div>
                                 </div>
@@ -152,51 +159,32 @@
                 </section>
 
 
-<!-- {% macro show_opt(result,opt) %}
-  
-
-  {% if result.correct|string() == opt|upper %}
-    {% if result.marked|string() == '0' %}
-    <td style="background-color: rgba(67,99,216,0.5);"> <b>{{opt|upper}}</b>. {{result[opt]}}</td>
-    {% else %}
-
-      <td style="background-color: rgba(0,255,0,0.4);"> <b>{{opt|upper}}</b>. {{result[opt]}}</td>
-    {% endif %}
-  {% else %} 
-    
-        {% if result.marked|string()|upper == opt|upper %}
-            <td style="background-color: rgba(255,0,0,0.4);"><b>{{opt|upper}}</b>. {{result[opt]}}</td>
-        {% else %}
-            <td><b>{{opt|upper}}</b>. {{ result[opt] }}</td>
-        {% endif %}
-  {% endif %}
-{% endmacro %} -->
 
 
-  <!--  {% for result in results%}
-        <table style="margin-bottom: 40px;">
-            <tr>
-                <td>Question No. {{ result.qid }}</td>
-                <td>Marks: {{ result.marks }}</td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <pre style="border: 0px;" class="prettyprint" id="que"> {{result['q']}} </pre>
-                </td>
-            </tr>
-            <tr>
-                {{ show_opt(result,'a') }}
-                {{ show_opt(result,'b') }}
-            </tr>
-            <tr>
-                {{ show_opt(result,'c') }}
-                {{ show_opt(result,'d') }}
-            </tr>
-            <tr>
-                <td colspan="2"><b>Explanation</b>:  {{result.explanation}} </td>
-            </tr>
-        </table> 
-    {% endfor %} -->
+
+
+
+
+
+
+
+            </div>
+
+            <footer>
+                
+            </footer>
+        </div>
+    </div>
+    <script src="static/studui/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+    <script src="static/studui/assets/js/bootstrap.bundle.min.js"></script>
+
+    <script src="static/studui/assets/vendors/apexcharts/apexcharts.js"></script>
+    <script src="static/studui/assets/js/pages/dashboard.js"></script>
+
+    <script src="static/studui/assets/js/main.js"></script>
+</body>
+
+</html>
 
 <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
 <script src="static/studui/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>

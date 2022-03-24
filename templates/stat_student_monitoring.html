@@ -170,7 +170,7 @@
                 <div class="card-body">
                      <h2 class="h5 center-block"><b>Window Events</b></h2>
                   <br>
-                  <h3 class="h2 mb-1 center-block" id="win"></h3>
+                  <!-- <h3 class="h2 mb-1 center-block" id="win"></h3> -->
                   <br>
                <a class="nav-link" href="/wineventstudentslogs/{{testid}}/{{email}}"> <button class="btn btn-block btn-danger" value="VIEW">VIEW</button></a> 
                  
@@ -260,7 +260,7 @@
         contentType: 'application/json;charset=UTF-8',
         cache: false,
         success: function(msg) {
-            $("#win").html(msg.win);
+            /* $("#win").html(msg.win); */
             $("#mob").html(msg.mob);
             $("#per").html(msg.per);
             $("#tot").html(msg.tot);

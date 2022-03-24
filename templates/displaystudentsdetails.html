@@ -5,7 +5,9 @@
   <!-- Required meta tags --> 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
   <title>Admin Dashboard</title>
+
   <!-- base:css -->
   <link rel="stylesheet" href="static/vendors/mdi/css/materialdesignicons.min.css">
   <link rel="stylesheet" href="static/vendors/feather/feather.css">
@@ -237,10 +239,11 @@ $( document ).ready(function() {
   <div class="card card-folders">
     {% if callresults is not none %}
     <div class="card-header">
+       <h4 class="card-title m-0">Student logs of exam ID : {{tid}}</h4>
       <div class="row align-items-center">
           <div class="col mr-auto">
             {% for res in callresults %}
-            <h4 class="card-title m-0">Student logs of exam ID : {{res['test_id']}}</h4>
+            
             {% endfor %}
           </div>
           <div class="col col-auto pr-2">
@@ -288,6 +291,7 @@ $( document ).ready(function() {
                     
 
 
+
                   </div>
    
      
@@ -297,6 +301,89 @@ $( document ).ready(function() {
               </div>
             </div>
            
+
+
+<div class="row">
+
+            
+            <div class="col-lg-12 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                 
+                 
+                  
+
+                      
+                      <div class="container">
+                         <h4 class="card-title m-0">Messages from Students</h4>
+                         <br>
+                          <div class="card card-folders">
+
+                                  <div class="table-responsive">
+                                    {% if(callresults2 is not none and callresults2) %}
+                    <table class="table table-striped">
+
+                        <thead>
+                        <tr>
+                          <th>
+                            Sr. No
+                          </th>
+                          <th>
+                            Message
+                          </th>
+                          <th>
+                            Student Name
+                          </th>
+                          <th>
+                            Test ID
+                          </th>
+                        
+                        </tr>
+                      </thead>
+
+                      <tbody>
+
+                      </tbody>
+                      {% for res in callresults2 %}
+              <tr>
+                    <td>{{res['mid']}}</td>
+                    <td>{{res['content']}}</td>
+                    <td>{{res['student_name']}}</td>
+                    <td>{{res['tid']}}</td>
+                    
+                   </tr>
+{% endfor %}
+                    </table>
+                    {% else %}
+<div class="col-lg-12 col-sm-16">
+    <center><lottie-player src="https://assets7.lottiefiles.com/datafiles/vhvOcuUkH41HdrL/data.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player></center>
+    <h3 class="h3 text-center">
+        No Records Found!
+    </h3>  
+  </div>
+{% endif %}
+                  </div>
+                          </div>
+ 
+                     </div>
+                    
+
+
+
+                
+     
+
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+
+
+
+
+
                   </div>
                 </div>
               </div>

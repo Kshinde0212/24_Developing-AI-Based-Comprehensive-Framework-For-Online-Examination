@@ -123,7 +123,7 @@
           </li>
 
           <li class="nav-item">
-            <a class="nav-link" href="/publish-results-testid">
+            <a class="nav-link" href="/publish-results">
               <i class="icon-pie-graph menu-icon"></i>
               <span class="menu-title">Publish Results</span>
             </a>
@@ -178,6 +178,8 @@
     <div class="form-group">
       {{render_field(form.password, class="form-control")}}
     </div>
+
+  
     <div class="form-group">
       {{form.hidden_tag()}}
         {{render_field(form.doc, class="form-control-file")}}
@@ -186,11 +188,11 @@
   
     
     <div class="form-check">
-      {{render_field(form.show_result, class="form-check-input")}}
+      <span style="margin-left:30px">{{render_field(form.show_result, class="form-check-input")}}</span>
     </div>
     
     <div class="form-check">
-      {{render_field(form.neg_mark, class="form-check-input")}}
+      <span style="margin-left:30px">{{render_field(form.neg_mark, class="form-check-input")}}</span>
     </div>
     
     <br>

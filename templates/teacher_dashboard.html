@@ -21,6 +21,7 @@
   <!-- inject:css -->
   <link rel="stylesheet" href="static/regal_css/style.css">
   
+  
   <!-- endinject -->
   <link rel="shortcut icon" href="static/images/logo.png" />
 </head>
@@ -40,15 +41,20 @@
         <ul class="navbar-nav navbar-nav-right">
           
         
-          <li class="nav-item dropdown d-flex mr-4 ">
-                    
 
+
+          <li class="nav-item dropdown d-flex mr-4 ">
+         
             <a class="nav-link count-indicator dropdown-toggle d-flex align-items-center justify-content-center" id="notificationDropdown" href="#" data-toggle="dropdown">
               <i class="icon-cog"></i>
             </a>
+            
+
             <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown">
               <p class="mb-0 font-weight-normal float-left dropdown-header">Settings</p>
               
+     
+
               <a class="dropdown-item preview-item" href="/logout">
                   <i class="icon-inbox"></i> Logout
               </a>
@@ -57,11 +63,17 @@
           
         </ul>
 
+
+      
+
         <button type="button" class="btn btn-dark btn-rounded btn-fw" onclick="guide()">Quick Guide</button>
         
+        
+
         <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
           <span class="icon-menu"></span>
         </button>
+
 
 
       </div>
@@ -131,7 +143,7 @@
           </li>
 
           <li class="nav-item" data-title="10" data-intro="If you had chosen to not display results immediately to the students, then Publish Results allows you to publish the students results.">
-            <a class="nav-link" href="/publish-results-testid">
+            <a class="nav-link" href="/publish-results">
               <i class="icon-pie-graph menu-icon"></i>
               <span class="menu-title">Publish Results</span>
             </a>
@@ -214,7 +226,7 @@
                             End
                           </th>
                           <th>
-                            Duration
+                            Duration (in seconds)
                           </th>
                         </tr>
                       </thead>
@@ -262,6 +274,8 @@
     <!-- page-body-wrapper ends -->
   </div>
   <!-- container-scroller -->
+
+
 
   <!-- base:js -->
   <script src="static/vendors/base/vendor.bundle.base.js"></script>

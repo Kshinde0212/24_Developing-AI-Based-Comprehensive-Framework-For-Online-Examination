@@ -140,7 +140,7 @@
               <div class="card">
                 <div class="card-body">
                   
-                 <h4 class="card-title">Questions for test ID : {{tid}}</h4>
+                 <!-- <h4 class="card-title">Questions for test ID : {{tid}}</h4> -->
 
                   <div class="table-responsive">
                   {% if(callresults is not none and callresults) %}
@@ -150,33 +150,18 @@
                         <thead>
                         <tr>
                           <th>
-                            QID
+                            Sr. No
                           </th>
                           <th>
-                            Question
+                            Message
                           </th>
                           <th>
-                            A
+                            Student Name
                           </th>
                           <th>
-                            B
+                            Test ID
                           </th>
-                          <th>
-                            C
-                          </th>
-                          <th>
-                            D
-                          </th>
-                          <th>
-                            Ans
-                          </th>
-                          <th>
-                            Marks
-                          </th>
-                          <th>
-                            Explanation
-                          </th>
-                        </tr>
+                          </tr>
                       </thead>
 
                       <tbody>
@@ -184,15 +169,11 @@
                       </tbody>
                       {% for res in callresults %}
               <tr>
-                    <td>{{res['qid']}}</td>
-                    <td>{{res['q']}}</td>
-                    <td>{{res['a']}}</td>
-                    <td>{{res['b']}}</td>
-                    <td>{{res['c']}}</td>
-                    <td>{{res['d']}}</td>
-                    <td>{{res['ans']}}</td>
-                    <td>{{res['marks']}}</td>
-                    <td>{{res['explanation']}}</td>
+                    <td>{{res['mid']}}</td>
+                    <td>{{res['content']}}</td>
+                    <td>{{res['student_name']}}</td>
+                    <td>{{res['tid']}}</td>
+                   
                    </tr>
 {% endfor %}
                     </table>

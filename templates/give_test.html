@@ -24,6 +24,11 @@
         src="https://code.jquery.com/jquery-3.4.1.min.js"
         integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
         crossorigin="anonymous"></script>
+        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="sweetalert2.min.js"></script>
+        <link rel="stylesheet" href="sweetalert2.min.css">
+        <script src="sweetalert2.all.min.js"></script>
+        
 </head>
 
 <body>
@@ -52,7 +57,8 @@
                         </li>
 
                         <li class="sidebar-item">
-                            <a href="/give-test" class='sidebar-link'>
+                            <!-- <a href="/give-test" class='sidebar-link'> -->
+                                <a href="#" onclick="return disp_rules()" class='sidebar-link'>
                                 <i class="bi bi-pen-fill"></i>
                                 <span>Attempt Test</span>
                             </a>
@@ -111,6 +117,43 @@
 
 
 </div>
+
+<script type="text/javascript">
+var elem = document.documentElement;
+
+function disp_rules()
+{
+    if (document.exitFullscreen) 
+    {
+        document.exitFullscreen();
+    }
+
+  Swal.fire({
+  title: '<strong>Read instructions carefully</strong>',
+  icon: 'success',
+  html:
+    '<h5>THIS IS A PROCTORED TEST</h5> ' +
+    '<ol> <br> <li>Ensure you are in front of camera all the time during the exam</li> <br> <li>Do not navigate away from the exam tab. If any navigation is done then the system will show alert on the screen and the logs will be generated.</li> <br> <li>Dont try to use mobile or any other material. System will detect everything from the student video.</li> <br> <li>Click on BEGIN EXAM button below and then enter the test id and password shared by your teacher.</li></ol>',
+  showCloseButton: false,
+  showCancelButton: false,
+  focusConfirm: true,
+  confirmButtonColor: '#0000FF',
+  confirmButtonText:
+    'OK, BEGIN EXAM!',
+  confirmButtonAriaLabel: 'We are abide by rules!'
+}).then((result) => {
+  if (result.isConfirmed) 
+  {
+    window.location.href = "/give-test";
+  }
+})
+}
+
+
+</script>
+
+
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </body>

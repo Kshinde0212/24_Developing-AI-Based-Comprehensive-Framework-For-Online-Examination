@@ -1,25 +1,106 @@
-{% extends 'layout.html' %}
+<!DOCTYPE html>
+<html lang="en">
 
-{% block body %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/studui/assets/css/bootstrap.css">
+
+    <link rel="stylesheet" href="/static/studui/assets/vendors/iconly/bold.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/studui/assets/vendors/perfect-scrollbar/perfect-scrollbar.css">
+    <link rel="stylesheet" href="/static/studui/assets/vendors/bootstrap-icons/bootstrap-icons.css">
+    <link rel="stylesheet" href="/static/studui/assets/css/app.css">
+    <link rel="shortcut icon" href="/static/studui/assets/images/favicon.svg" type="image/x-icon">
+    <link ref="stylesheet" type="text/css" href="{{ url_for('static', filename='snackbar.min.css') }}"/> 
+    <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='mysnackbarcss.css') }}">
+    <script src="{{ url_for('static', filename='snackbar.min.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<script>
+    $(document).ready(function(){
+        $("#myModal").modal('show');
+    });
+</script>
+</head>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script type="text/javascript"> var answers = "{{answers}}";</script>
-<!-- <div id="time">{{duration}}</div> -->
+<script>var tid = "{{tid}}";</script>
+<script
+        src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+        crossorigin="anonymous"></script>
 
-<table class="table table-striped">
-<tr>
-  <td id='queid'>Question No.</td>
-  <td id='mark'>Marks: {{ marks }}</td>
-  <td><b>Time Left :<div id="time">{{duration}}</div></b></td>
-</tr>
-</table>
+<body>
+    <div id="app">
+        
 
 
-<div class="card">
-  <div class="card-body">
-    <p id="que" style="">{{ q }}</p>
-  </div>
-</div>
 
-<table id="options" class="table table-success table-striped" border="1">
+
+
+<section class="d-flex align-items-center my-5 mt-lg-6 mb-lg-5">
+             <div class="container">
+                     <div class="col-12 d-flex align-items-center justify-content-center">
+                         <div class="bg-white shadow-soft border rounded border-light p-4 p-lg-5 w-100 fmxw-900">
+                             <div class="text-center text-md-center mb-4 mt-md-0">
+                                 <div class="card-body">
+                                  <div class="row">
+                                    <div class="col"><span><h4 class="display-6">Name: {{session['name']}}</h4></span></div>
+                                    <div class="col"><span><h4 class="display-6">Email: {{session['email']}}</h4></span></div>
+                                  </div>
+                                  </div>
+                             </div>
+                             <div class="row">
+                             
+                                      <div class="form-group col-3">
+                                        <div class="mb-0 h6">
+                                          EXAM-ID: {{tid}}
+                                          </div>
+                                          </div>
+                                          <div class="form-group col-3">
+                                            <div class="mb-0 h6">
+                                              TIME LEFT:<div id="time">{{duration}}                                                </div>
+                                              </div>
+                            </div>
+                            </div>
+                           
+                            <div class="form-group">
+                                <div class="container">
+                              <div id="overlay">
+                                      <div class="row" id="question-list">
+                                        <br>  
+                                      </div> 
+                                  </div>
+                                  </div>
+                                </div>
+                            
+
+                             
+                                  <table class="table">
+                                    <thead class="thead-dark"> 
+                               <tr>
+                               <th> <div id='queid'>Q.</div><div id="que">{{ q }}</div><div id='mark'> [MAX MARKS: {{ marks}}] </div>
+                                       </th>
+                              </tr>
+                            </thead>
+                                    </table>
+
+                              
+
+
+                              <div class="form-group">
+                                <label class="h6" for="exampleFormControlTextarea1">Select your Answer</label>
+                         
+                         <table id="options" class="table">
   
   <tr border="1">
     <td id='a'>𝐀. {{ a }}</td>
@@ -30,16 +111,37 @@
     <td id='d'>𝐃. {{ d }}</td>
   </tr>
 </table>
-    
-<div id="overlay">
-  <div class="container" id="question-list">
-  </div>
-</div>    
+
+    <div class="row">
+      <div class="form-group col-3">
+        <div class="mb-0 h6">
+          <input type="button" value="Prev" id="prev" class="btn btn-primary btn-rounded">
+        </div>
+          </div>
+          <div class="form-group col-3">
+            <div class="mb-0 h6">
+              <input type="button" value="Next" id="next" class="btn btn-primary btn-rounded">
+            </div>
+              </div>
+
+              <div class="form-group col-3">
+                    <div class="mb-0 h6">
+                      <button class="btn btn-primary btn-rounded" id="bookmark">Bookmark</button>
+                    </div>
+              </div>
+      </div>
 
 <div id="submit-overlay"></div>
 
+  <div class="form-group">
+  <div class="btn btn-block btn-primary" id="finish">Finish Test</div>
+  </div>
 
-<div class="form-group">
+<div id="snackbar"></div>
+
+ 
+
+  <div class="form-group">
     <div class="container">
       <div class="justify-content-center align-items-center">
         <div id="otEmbedContainer"  id ="livecheck" style="width:320px; height:320px; display: none;">
@@ -48,8 +150,7 @@
       </div>
     </div>
 
-
-<div class="form-group">
+  <div class="form-group">
     <div class="container" id ="videocheck" style="display: none;">
       <div class="justify-content-center align-items-center">
       <video id="stream" width="320" height="320">
@@ -59,33 +160,57 @@
       </div>
     </div>
 
-
-
-<footer class="page-footer fixed-bottom pt-4">
-  <div class="container">
-
-    <ul class="list-unstyled list-inline text-center py-2">
-      <li class="list-inline-item">
-        <button class="btn btn-primary btn-rounded" id="questions">Questions</button>
-        <input type="button" value="Prev" id="prev" class="btn btn-primary btn-rounded">
-        <input type="button" value="Next" id="next" class="btn btn-primary btn-rounded">
-        <input type="button" value="Submit" id="submit" class="btn btn-success btn-rounded">
-        <button class="btn btn-primary btn-rounded" id="bookmark">Bookmark</button>
-        <div class="btn btn-success" id="finish">Finish Test</div>
-      </li>
-    </ul>
   </div>
+ </div>
+</div>
 
-<div id="snackbar">Don't try to open new window or any other applications. You are being monitored!</div>
+</div>
+</section>
 
-</footer>
+<div id="message"></div>
+    <form action="" method="post">
+      <div style="margin: 10px;"> Name: <input type="text" name="message" value="" /></div>
+      <div style="margin: 10px;"><input type="button" onclick="submitForm();" name="save_contact" value="Send Message" class="btn btn-social-icon btn-dribbble btn-rounded" /></div>
 
-<script type="text/javascript" src="{{ url_for('static', filename='app.js') }}"></script>
-<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
-<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='disp.css') }}">
+    </form>
+
+<script type="text/javascript">
+  
+  function submitForm()
+    {
+      var msgc = $('input[name=message]').val();
+
+      if(message != '')
+      {
+        var formData = {message: msgc}; 
+        $('#message').html('<span style="color: green">Message sent successfully to proctor</span>');
+        $.ajax({url: "/savemsg", type: 'POST', data : formData , success: function(response)
+        {
+          var res = response.JSON(response);
+          console.log(res);
+          if(res.success == true)
+          $('#message').html('<span style="color: green">Message sent successfully to proctor</span>');
+    
+          else
+            $('#message').html('<span style="color: red">Message not submitted. Some error in running the database query.</span>');
+        }
+        });
+      }
+      else
+      {
+        $('#message').html('<span style="color: red">Please fill all the fields</span>');
+      }
+      
+      
+    } 
+
+</script>    
 
 
-<script>
+
+ <script type="text/javascript" src="{{ url_for('static', filename='app.js') }}"></script>
+  <script>
+   
 var vid = "{{proctortype}}";
 console.log(vid)
 if(vid == "0")
@@ -98,7 +223,16 @@ else
 {
   document.getElementById('livecheck').style.display = "block"
 }
-    </script> 
+    </script>  
 
+    <script src="/static/studui/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+    <script src="/static/studui/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="/static/studui/assets/vendors/apexcharts/apexcharts.js"></script>
+    <script src="/static/studui/assets/js/pages/dashboard.js"></script>
 
-{% endblock %}
+    <script src="/static/studui/assets/js/main.js"></script>
+</body>
+
+</html>
