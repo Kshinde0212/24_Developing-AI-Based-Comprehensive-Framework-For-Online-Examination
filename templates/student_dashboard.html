@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="static/studui/assets/vendors/perfect-scrollbar/perfect-scrollbar.css">
     <link rel="stylesheet" href="static/studui/assets/vendors/bootstrap-icons/bootstrap-icons.css">
     <link rel="stylesheet" href="static/studui/assets/css/app.css">
-    <link rel="shortcut icon" href="static/studui/assets/images/favicon.svg" type="image/x-icon">
+    <link rel="shortcut icon" href="static/assets/images/g24.png" type="image/x-icon">
     <script
         src="https://code.jquery.com/jquery-3.4.1.min.js"
         integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
@@ -32,9 +32,7 @@
             <div class="sidebar-wrapper active">
                 <div class="sidebar-header">
                     <div class="d-flex justify-content-between">
-                        <div class="logo">
-                            <a href="index.html"><img src="static/studui/assets/images/logo/logo.png" alt="Logo" srcset=""></a>
-                        </div>
+                        
                         <div class="toggler">
                             <a href="#" class="sidebar-hide d-xl-none d-block"><i class="bi bi-x bi-middle"></i></a>
                         </div>
@@ -42,7 +40,7 @@
                 </div>
                 <div class="sidebar-menu">
                     <ul class="menu">
-                        <li class="sidebar-title">Menu</li>
+                        <li class="sidebar-title"><h2>Menu</h2></li>
 
                         <li class="sidebar-item active ">
                             <a href="/student_dashboard" class='sidebar-link'>
@@ -65,7 +63,7 @@
                             </a>
                         </li>
 
-                    <li class="sidebar-title">Forms &amp; Tables</li>
+                    <li class="sidebar-title">Options</li>
 
                     <li class="sidebar-item">
                             <a href="/" class='sidebar-link'>
@@ -225,7 +223,7 @@ function disp_rules()
   icon: 'success',
   html:
     '<h5>THIS IS A PROCTORED TEST</h5> ' +
-    '<ol> <br> <li>Ensure you are in front of camera all the time during the exam</li> <br> <li>Do not navigate away from the exam tab. If any navigation is done then the system will show alert on the screen and the logs will be generated. <b>If you navigate away more than 5 times your test attempt will not be conisdered.</b> </li> <br> <li>Dont try to use mobile or any other material. System will detect everything from the student video.</li> <br> <li>Click on BEGIN EXAM button below and then enter the test id and password shared by your teacher.</li></ol>',
+    '<ol> <br> <li>Ensure you are in front of camera all the time during the exam</li> <br> <li>Do not navigate away from the exam tab. If any navigation is done then the system will show alert on the screen and the logs will be generated. <b>If you navigate away more than 5 times your test will automatically be ended.</b> </li> <br> <li>Dont try to use mobile or any other material. System will detect everything from the student video.</li> <br> <li>Click on BEGIN EXAM button below and then enter the test id and password shared by your teacher.</li></ol>',
   showCloseButton: false,
   showCancelButton: false,
   focusConfirm: true,

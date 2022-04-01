@@ -7,6 +7,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Admin Dashboard</title>
   <!-- base:css -->
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
   <link rel="stylesheet" href="/static/vendors/mdi/css/materialdesignicons.min.css">
   <link rel="stylesheet" href="/static/vendors/feather/feather.css">
   <link rel="stylesheet" href="/static/vendors/base/vendor.bundle.base.css">
@@ -23,13 +25,47 @@
   
   <!-- endinject -->
   <link rel="shortcut icon" href="/static/images/logo.png" />
+
+
+<script type="text/javascript">
+      google.charts.load("current", {packages:["corechart"]});
+      google.charts.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+            {% for key, value in data2.items() %}
+                {% if value is string %}
+                    ['{{ key }}', '{{ value }}'],
+                {% else %}
+                    ['{{ key }}', {{ value }}],
+                {% endif %}
+            {% endfor %}
+        ]);
+ 
+        var options = {
+          is3D: true,
+          //pieHole: 0.5
+          pieStartAngle: 100
+          /*slices: {  
+            2: {offset: 0.2},
+            3: {offset: 0.3}
+          }*/
+          /*slices: {
+            1: { color: 'transparent' }
+          }*/
+        };
+ 
+        var chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
+        chart.draw(data, options);
+      }
+    </script>
+
 </head>
 <body>
   <div class="container-scroller">
     <!-- partial:partials/_navbar.html -->
     <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
       <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-        <a class="navbar-brand brand-logo" href="/teacher_dashboard"><img src="static/images/logo.svg" alt="logo"/></a>
+        <a class="navbar-brand brand-logo" href="/teacher_dashboard">G24</a>
       
       </div>
       <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
@@ -203,6 +239,44 @@
                     </div>
                   </div>
             </div>
+
+
+
+  <div class="row mt-3">
+        
+     
+
+
+                  <div class="col-xl-9 d-flex grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                      <h4 class="card-title">Statistics. Passing Percentage is {{passp}}%</h4>
+                      <div class="row">
+                          <div id="piechart_3d" style="width: 900px; height: 500px;"></div>
+                        
+                      </div>
+        
+                </div>
+                        
+                    </div>
+                  </div>
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
