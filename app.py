@@ -22,6 +22,7 @@ from validate_email import validate_email
 import random
 import json
 import csv
+import math
 import operator
 import pandas as pd
 from wtforms_components import TimeField , DateField
@@ -30,6 +31,7 @@ from wtforms.validators import ValidationError, NumberRange , InputRequired
 import socket
 import camera
 #from emailverifier import Client
+from waitress import serve
 
 app = Flask(__name__)
 app.secret_key= '20november'
@@ -164,6 +166,7 @@ class UploadForm(FlaskForm):
     neg_mark = BooleanField('Enable negative marking')
     duration = IntegerField('Duration(in min)')
     password = StringField('Test Password', [validators.Length(min=3, max=6)])
+    pass_percentage = IntegerField('Pass Percentage (Dont specify %) ')
     proctor_type = RadioField('Proctoring Type', choices=[('0','Automatic Monitoring'),('1','Live Monitoring')]) 
 
     
@@ -190,6 +193,10 @@ class TestForm(Form):
 def index():
 	return render_template('index.html')
 
+@app.route('/about')
+def about():
+	return render_template('about.html')
+
 def generateOTP():
     otp=str(randint(00000,99999)) 
     return otp
@@ -211,7 +218,7 @@ def register():
 		session['secretpassword'] = sesOTP
 		cur = mysql.connection.cursor()
 		cur.execute('INSERT INTO users(username,name,email,password,secretpassword,user_type,user_image) values(%s,%s,%s,%s,%s,%s,%s)', (username,name,email,password,sesOTP,ut,imgdata1))
-		msg1 = Message('From E-Radius', sender = sender, recipients = [email])
+		msg1 = Message('From G24', sender = sender, recipients = [email])
 		msg1.body = "Thanks for registering. Please keep this secret code with you as it is needed for future logins. Your secret code is "+sesOTP+"."
 		mail.send(msg1)
 		mysql.connection.commit()
@@ -384,6 +391,7 @@ def addquestion():
 	else:
 		return render_template("addquestion.html", cresults = None)
 
+
 @app.route('/adddispques', methods=['GET','POST'])
 @is_logged
 def adddispques():
@@ -544,18 +552,20 @@ def create_test():
 
 			duration = int(form.duration.data)*60
 			password = form.password.data
+			passp = form.pass_percentage.data
 			subject = form.subject.data
 			topic = form.topic.data
 			proctor_type = form.proctor_type.data
 
 
-			cur.execute('INSERT INTO teachers (username, test_id, start, end, duration, show_ans, password, subject, topic,neg_mark, proctoring_type) values(%s,%s,%s,%s,%s,%s,%s, %s,%s,%s,%s)',
-				(dict(session)['username'], test_id, start_date_time, end_date_time, duration, show_result, password, subject, topic, neg_mark,proctor_type))
+			cur.execute('INSERT INTO teachers (username, test_id, start, end, duration, show_ans, password, passp , subject, topic,neg_mark, proctoring_type) values(%s,%s,%s,%s,%s,%s,%s,%s, %s,%s,%s,%s)',
+				(dict(session)['username'], test_id, start_date_time, end_date_time, duration, show_result, password, passp , subject, topic, neg_mark,proctor_type))
 			mysql.connection.commit()
 			cur.close()
 			flash(f'Test ID: {test_id}', 'success')
 			return redirect(url_for('create_test'))
 		except Exception as e:
+			print(e)
 			flash('Invalid Input File Format','danger')
 			return redirect(url_for('create_test'))
 		
@@ -855,6 +865,23 @@ def student_results(username, testid):
 		tid = testid
 		final = []
 		count = 1
+
+
+		cri1 = 0
+		cri2 = 0
+		cri3 = 0
+		
+		records_sum = cur.execute('SELECT sum(marks) from questions where test_id = %s', [tid])
+		if records_sum>0:
+			data_sum = cur.fetchone()
+			dm_sum = data_sum['sum(marks)']
+			dm_sum = int(dm_sum)
+
+		fetch_pp = cur.execute('SELECT passp from teachers where test_id = %s', [tid])
+		if fetch_pp>0:
+			fa = cur.fetchone()
+			pp = fa['passp']
+
 		results = cur.execute('SELECT * from grade where test=%s' , [tid])
 		if results > 0:
 			results = cur.fetchall()
@@ -864,9 +891,41 @@ def student_results(username, testid):
 				t = df['marks']
 				final.append([m, sn, t])
 				count+=1
+		records = cur.execute('SELECT marks from grade where test=%s' , [tid])
+		if records > 0:
+			records = cur.fetchall()
+			for df in records:
+				t = df['marks']
+				student_per = (t/dm_sum)*100
+				if student_per < 40:
+					cri1 = cri1 + 1
+				elif student_per >=40 and student_per < 75:
+					cri2 = cri2 + 1
+				else:
+					cri3 = cri3 + 1	
+
+
+		''' records = cur.execute('SELECT count(*) from grade where test = %s and marks<5', [tid])
+		if records>0:
+			data = cur.fetchone()
+			dm = data['count(*)']
+		records2 = cur.execute('SELECT count(*) from grade where test = %s and marks=5', [tid])
+		if records2>0:
+			data2 = cur.fetchone()
+			dm2 = data2['count(*)']
+		records3 = cur.execute('SELECT count(*) from grade where test = %s and marks>5', [tid])
+		if records3>0:
+			data3 = cur.fetchone()
+			dm3 = data3['count(*)'] '''
+
+		#data_of_exam = {'More than 5' : dm, 'Less than 5' : 20, 'Equal to 5' : 11}
+		#print(data_of_exam)	
+		#data_of_exam = {'Marks' : 20 , 'Height':170}
+		#data_of_exam = {'Task' : 'Hours per Day', '<40%' : dm, '>=40% and <75%' : dm2 , '>=75%' : dm3}
+		data_of_exam = {'Task' : 'Hours per Day', 'Less than 40%' : cri1, 'More than 40% and less than 75%' : cri2 , 'Greater than 75%' : cri3}
 		if request.method =='GET':
 			#results = sorted(results, key=operator.itemgetter('marks'))
-			return render_template('student_results.html', data=results)
+			return render_template('student_results.html', data=results , data2=data_of_exam , passp = pp)
 		else:
 			fields = ['Test', 'Student Name', 'Marks']
 			with open('static/' + testid + '.csv', 'w') as f:
@@ -972,6 +1031,7 @@ def studentmonitoringstats(testid,email):
 @app.route('/displaystudentslogs/<testid>/<email>', methods=['GET','POST'])
 @is_logged
 def displaystudentslogs(testid,email):
+	em = email
 	cur = mysql.connection.cursor()
 	cur.execute('SELECT * from proctoring_log where test_id = %s and email = %s', (testid, email))
 	callresults = cur.fetchall()
