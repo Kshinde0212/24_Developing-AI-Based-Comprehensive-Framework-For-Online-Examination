@@ -58,8 +58,9 @@ window.onfocus = function(event) {
     navigator.webkitGetUserMedia ||
     navigator.mozGetUserMedia;
 
-    if( mediaSupport && null == cameraStream ) {
-      navigator.mediaDevices.getUserMedia( { video: true, audio: true } )
+    if( mediaSupport && null == cameraStream ) 
+    {
+      navigator.mediaDevices.getUserMedia( { video: true, audio: false } )
       .then( function( mediaStream ) {
         cameraStream = mediaStream;
         stream.srcObject = mediaStream;
@@ -93,7 +94,7 @@ window.onfocus = function(event) {
     }
     else {
       alert('Your browser does not support media devices.');
-      return;
+      window.location.replace('/student_dashboard');
     }
   }
   
