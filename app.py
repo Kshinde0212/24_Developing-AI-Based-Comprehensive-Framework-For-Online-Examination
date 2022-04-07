@@ -31,7 +31,7 @@ from wtforms.validators import ValidationError, NumberRange , InputRequired
 import socket
 import camera
 #from emailverifier import Client
-from waitress import serve
+
 
 app = Flask(__name__)
 app.secret_key= '20november'
