@@ -12,7 +12,7 @@ Commands
 Create Environment
 1) download projectenv.yml from github
 2) on anaconda terminal 
-   2a) conda env create --name testenv --file=projectenv.yml
+   2a) conda env create --name testenv --file=project_env.yml
 
 1) open Xampp . Turn On apache & mysql
 2) On anaconda terminal  
