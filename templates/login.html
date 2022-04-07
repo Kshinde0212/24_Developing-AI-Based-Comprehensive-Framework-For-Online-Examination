@@ -17,15 +17,20 @@
     <form action="{{ url_for('login') }}" method="POST">
       
       <div class="form-group">
-        <label id="up" >Username</label>
-        <input type="text" name="username" class="form-control" value="", placeholder="eg. johnsmith">
+        <label id="up" >Enter Username</label>
+        <input type="text" name="username" class="form-control" value="", placeholder="eg. johnsmith" required>
       </div>
       
       <div class="form-group">
-        <label id="up">Secret Password</label>
-        <input id="pass" type="password" name="secretpassword" class="form-control" data-toggle="password">
+        <label id="up">Enter Secret Password (sent by email)</label>
+        <input id="pass" type="password" name="secretpassword" class="form-control" data-toggle="password" required>
         <span class="fas fa-eye icon"></span>
       </div> 
+       <div>
+        <p>Forgot secret passord?
+          <a href="/forgotsp" id="forgotsp">Click here to regenerate</a>.
+        </p>
+      </div>
       
 
       <div class="form-group">

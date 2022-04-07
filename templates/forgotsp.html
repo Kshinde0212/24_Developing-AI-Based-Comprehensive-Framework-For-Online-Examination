@@ -1,0 +1,31 @@
+{% extends 'layout.html' %}
+{% block body %}
+<main>
+ <section class="d-flex align-items-center my-5 mt-lg-6 mb-lg-5">
+            <div class="container">
+                    <div class="col-12 d-flex align-items-center justify-content-center">
+                        <div class="bg-white shadow-soft border rounded border-light p-4 p-lg-5 w-100 fmxw-650">
+                            <div class="text-center text-md-center mb-4 mt-md-0">
+                                <h2 class="h4">Regnerate Secret Password</h2>  
+                            </div>
+							
+                            <div class="card-body">
+							    <form action="" method="POST" class="mt-4">
+                                   
+                                    <div class="form-group">
+                                        <label for="exampleInputIcon3">Enter email</label>
+                                        <div class="input-group mb-4">
+                                          
+                                            <input name="lpemail" class="form-control" id="exampleInputIcon3" placeholder="example@company.com" type="email" aria-label="email adress" required>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-block btn-primary">Regenerate OTP</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+{% endblock %}
