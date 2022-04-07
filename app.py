@@ -47,7 +47,7 @@ app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 app.config['MAIL_SERVER']='smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USERNAME'] = 'swapnilsapre29@gmail.com'
-app.config['MAIL_PASSWORD'] = 'Flash5151'
+app.config['MAIL_PASSWORD'] = 'recordbreakerPN09'
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 mail = Mail(app)
@@ -157,6 +157,7 @@ def video_feed():
 class UploadForm(FlaskForm):
     subject = StringField('Subject')
     topic = StringField('Topic')
+    testid = StringField('Enter Test IDs')
     doc = FileField('Docx Upload', validators=[FileRequired()])
     start_date = DateField('Start Date')
     start_time = TimeField('Start Time', default=datetime.utcnow()+timedelta(hours=5.5))
@@ -167,7 +168,7 @@ class UploadForm(FlaskForm):
     duration = IntegerField('Duration(in min)')
     password = StringField('Test Password', [validators.Length(min=3, max=6)])
     pass_percentage = IntegerField('Pass Percentage (Dont specify %) ')
-    proctor_type = RadioField('Proctoring Type', choices=[('0','Automatic Monitoring'),('1','Live Monitoring')]) 
+    proctor_type = RadioField('Proctoring Type', choices=[('0','Student Monitoring')]) 
 
     
     def validate_end_date(form, field):
@@ -201,6 +202,24 @@ def generateOTP():
     otp=str(randint(00000,99999)) 
     return otp
 
+@app.route('/forgotsp', methods=['GET','POST'])
+def forgototp():
+	cur = mysql.connection.cursor()
+	if request.method == 'POST':
+		lpemail = request.form['lpemail']
+		newOTP = generateOTP()
+		session['secretpassword'] = newOTP
+		cur.execute('UPDATE users SET secretpassword=%s where email=%s', (newOTP,lpemail))
+		msg1 = Message('From Smart E-Exam', sender = sender, recipients = [lpemail])
+		msg1.body = "Your secret password has been regenerated. Please keep this new secret code with you.Your secret code is "+newOTP+"."
+		mail.send(msg1)
+		mysql.connection.commit()
+		cur.close()
+		flash('OTP regenerated successfully!  Please check your email.', 'success') 
+		# change in login function to redirect to warning page
+	elif request.method == 'POST':
+		flash('OTP regenerated successfully!  Please check your email.', 'success')
+	return render_template('forgotsp.html')
 
 @app.route('/register', methods=['GET','POST'])
 def register():
@@ -211,14 +230,15 @@ def register():
 		name = request.form['name']
 		email = request.form['email']
 		username = request.form['username']
-		password = sha256_crypt.encrypt(str(request.form['password']))
 		imgdata1 = request.form['image_hidden']
 		ut = request.form['user_type']
 		sesOTP = generateOTP()
 		session['secretpassword'] = sesOTP
 		cur = mysql.connection.cursor()
-		cur.execute('INSERT INTO users(username,name,email,password,secretpassword,user_type,user_image) values(%s,%s,%s,%s,%s,%s,%s)', (username,name,email,password,sesOTP,ut,imgdata1))
-		msg1 = Message('From G24', sender = sender, recipients = [email])
+		cur.execute('SELECT * from users')
+		data = cur.fetchone()
+		cur.execute('INSERT INTO users(username,name,email,secretpassword,user_type,user_image) values(%s,%s,%s,%s,%s,%s)', (username,name,email,sesOTP,ut,imgdata1))
+		msg1 = Message('From Smart E-Exam', sender = sender, recipients = [email])
 		msg1.body = "Thanks for registering. Please keep this secret code with you as it is needed for future logins. Your secret code is "+sesOTP+"."
 		mail.send(msg1)
 		mysql.connection.commit()
@@ -526,7 +546,8 @@ def create_test():
 		f.save('questions/' + filename)
 		cur = mysql.connection.cursor()
 		d = doctodict('questions/' + f.filename.replace(' ', '_').replace('(','').replace(')',''))
-		test_id = generate_slug(2)
+		#test_id = generate_slug(2)
+		test_id = form.testid.data
 		try:
 			for no, data in d.items():
 				marks = data['((MARKS)) (1/2/3...)']
@@ -549,7 +570,7 @@ def create_test():
 			end_date_time = str(end_date) + " " + str(end_time)
 			show_result = form.show_result.data
 			neg_mark = form.neg_mark.data
-
+			
 			duration = int(form.duration.data)*60
 			password = form.password.data
 			passp = form.pass_percentage.data
