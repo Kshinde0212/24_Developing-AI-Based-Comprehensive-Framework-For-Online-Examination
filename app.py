@@ -13,6 +13,7 @@ from random import randint
 import numpy as np
 import base64
 import cv2
+
 from deepface import DeepFace
 from flask_mail import Mail, Message
 from threading import Thread
@@ -31,7 +32,7 @@ from wtforms.validators import ValidationError, NumberRange , InputRequired
 import socket
 import camera
 #from emailverifier import Client
-
+from waitress import serve
 
 app = Flask(__name__)
 app.secret_key= '20november'
@@ -577,8 +578,6 @@ def create_test():
 			subject = form.subject.data
 			topic = form.topic.data
 			proctor_type = form.proctor_type.data
-
-
 			cur.execute('INSERT INTO teachers (username, test_id, start, end, duration, show_ans, password, passp , subject, topic,neg_mark, proctoring_type) values(%s,%s,%s,%s,%s,%s,%s,%s, %s,%s,%s,%s)',
 				(dict(session)['username'], test_id, start_date_time, end_date_time, duration, show_result, password, passp , subject, topic, neg_mark,proctor_type))
 			mysql.connection.commit()
@@ -589,7 +588,6 @@ def create_test():
 			print(e)
 			flash('Invalid Input File Format','danger')
 			return redirect(url_for('create_test'))
-		
 	return render_template('create_test.html' , form = form)
 
 
