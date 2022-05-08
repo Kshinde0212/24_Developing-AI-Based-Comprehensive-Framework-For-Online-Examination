@@ -1,11 +1,11 @@
-# E-Radius-UpdatedUI
+# 24_Developing_AI_Based_Comprehensive_Framework_For_Online_Assessments
 
-https://www.mediafire.com/file/bp4stjan6z77h9b/variables.data-00000-of-00001/file
+Variables file : https://www.mediafire.com/file/bp4stjan6z77h9b/variables.data-00000-of-00001/file
 
-https://www.mediafire.com/file/n4m90dmwtvumpfs/variables.index/file
+Variables Index file : https://www.mediafire.com/file/n4m90dmwtvumpfs/variables.index/file
 
 
-Yolo file https://www.mediafire.com/file/hd2sfcxicgy4vll/yolov3.weights/file
+Yolo file : https://www.mediafire.com/file/hd2sfcxicgy4vll/yolov3.weights/file
 
 Commands
 
